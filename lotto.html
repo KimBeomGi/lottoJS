@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .number {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      color: #ffffff;
+      box-sizing: border-box;
+      margin: 10px;
+    }
+    .line{
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      border-bottom: 1px solid #000000;
+      box-sizing: border-box;
+    }
+    .type1{
+      background-color: #f2b720;
+    }
+    .type2{
+      background-color: #4072AC;
+    }
+    .type3{
+      background-color: #DE4c0E;
+    }
+    .type4{
+      background-color: #9195A5;
+    }
+    .type5{
+      background-color: #13BE4B;
+    }
+    .title{
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <h1 class="title">나의 1등 당첨 번호</h1>
+  <div>
+    <div id="lottoNumbers">
+    </div>
+  </div>
+
+  <script>
+    const lottoNumbers = document.querySelector('#lottoNumbers')
+
+    // let a = Math.floor(Math.random() * (max - min + 1)) + min  // min, max 포함하기
+    // let a = Math.floor(Math.random() * (45 - 1 + 1)) + 1
+    let totalExcludeNumbers = new Set() // 내가 뽑은 모든 번호들
+    let excludeNumbers = new Set()  // 이번에 내가 뽑은 번호들
+    
+    
+    function 로또번호뽑기(isWin = false){
+      let numLineDiv
+      if(isWin){
+        numLineDiv = document.createElement('div')
+        numLineDiv.classList.add('line')
+      }
+      let i = 0
+      let thisNumbers = []
+      while (i < 6) {
+        // 1~45
+        let number = Math.floor(Math.random() * (45 -1 + 1)) + 1
+        if (!thisNumbers.includes(number) && !totalExcludeNumbers.has(number)) {
+          thisNumbers.push(number)
+          excludeNumbers.add(number)
+          i += 1
+        }
+      }
+      thisNumbers = thisNumbers.sort((a,b) => {return a-b})
+      if(isWin){
+        
+        for(let i = 0; i < 6; i++){
+          const numDiv = document.createElement('div')
+          const numSpan = document.createElement('span')
+          numSpan.innerText = `${thisNumbers[i]}`
+          numDiv.classList.add('number')
+          numDiv.appendChild(numSpan)
+          let tmpType
+          if(1 <= thisNumbers[i] && thisNumbers[i] < 11){
+            tmpType = 'type1'
+          }else if(11 <= thisNumbers[i] && thisNumbers[i] < 21){
+            tmpType = 'type2'
+          }else if(21 <= thisNumbers[i] && thisNumbers[i] < 31){
+            tmpType = 'type3'
+          }else if(31 <= thisNumbers[i] && thisNumbers[i] < 41){
+            tmpType = 'type4'
+          }else{
+            tmpType = 'type5'
+          }
+          numDiv.classList.add(tmpType)
+          numLineDiv.appendChild(numDiv)
+        }
+        lottoNumbers.appendChild(numLineDiv)
+
+        console.log(`드디어 내가 될 로또 ${thisNumbers}`)
+      }else{
+        console.log(`내가 안 될 로또 ${thisNumbers}`)
+      }
+    }
+
+    //  5번 하기. 로또 5,000원치 삼.
+    for (let i = 0; i < 5; i++) {
+      로또번호뽑기()
+    }
+    // 그 번호를 모두 빼자.
+    totalExcludeNumbers = new Set([...excludeNumbers])
+    excludeNumbers = new Set()
+
+    // 5,000원치 산 로또에 있는 번호 말고! 새로 조합해서 로또 다시 줘보소. 1,000원치 구매
+    로또번호뽑기()
+    //  또 나온 번호를 모두 빼자.
+    totalExcludeNumbers = new Set([...totalExcludeNumbers, ...excludeNumbers])
+    excludeNumbers = new Set()
+
+    // 이제 나머지 번호로 조합임.
+    let 몇줄구매 = 5 
+    for (let i = 0; i < 몇줄구매; i++) {
+      로또번호뽑기(true)
+    }
+
+  </script>
+</body>
+</html>
